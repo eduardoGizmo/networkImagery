@@ -1,5 +1,10 @@
 ---
+import '../styles/global.css';
 
+const sizePresets = [
+	{ label: 'Shop Image', width: 1232, height: 672, exportFormat: 'image/jpeg' },
+	{ label: 'Installer Logo', width: 504, height: 168, exportFormat: 'image/png' },
+];
 ---
 
 <html lang="en">
@@ -7,11 +12,706 @@
 		<meta charset="utf-8" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<meta
+			name="description"
+			content="Internal image preparation workspace for the Installers Network team."
+		/>
+		<title>Network Imagery | Installers Network</title>
 	</head>
 	<body>
-		<h1>Astro</h1>
+		<main class="mx-auto min-h-screen max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+			<section class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+				<div class="panel p-5 sm:p-6">
+					<div class="flex flex-col gap-12">
+						<div class="flex flex-col gap-4 pb-6 lg:flex-row lg:items-end lg:justify-between">
+							<div class="grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:gap-10">
+								<div class="flex items-center">
+									<h1 class="mt-[20px] max-w-2xl text-4xl font-semibold tracking-[-0.04em] text-black sm:text-5xl">
+										Smart Image Processor
+									</h1>
+								</div>
+								<img
+									src="/powered-by-treadsy-logo-color.png"
+									alt="Powered by Treadsy"
+									class="h-auto w-full max-w-[10.5rem] justify-self-start md:justify-self-end"
+								/>
+							</div>
+						</div>
+
+						<div
+							id="dropzone"
+							class="upload-shell group relative overflow-hidden rounded-[2rem] border-4 border-dashed border-blue-900/15 p-8 transition duration-300 hover:border-blue-500/40"
+						>
+							<div class="absolute inset-0 bg-[linear-gradient(135deg,_#ecf3ff_0%,_#f9fafb_100%)] opacity-100"></div>
+							<div class="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+								<div class="flex items-center gap-4">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 -960 960 960"
+										fill="#1f1f1f"
+										class="h-[75px] w-[75px] shrink-0"
+										aria-hidden="true"
+									>
+										<path d="M480-480ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h320v80H200v560h560v-320h80v320q0 33-23.5 56.5T760-120H200Zm40-160h480L570-480 450-320l-90-120-120 160Zm440-320v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z"></path>
+									</svg>
+									<p class="text-lg font-medium text-black text-balance">Drop an image here or browse your files</p>
+								</div>
+								<label class="button-primary cursor-pointer whitespace-nowrap">
+									<span>Select Image</span>
+									<input
+										id="fileInput"
+										class="sr-only"
+										type="file"
+										accept=".jpg,.png,.psd,.tiff,.webp,.bmp,.gif,.heic,.jp2,.hdr,.dds,.exr,.fts,.heif,.jfif,.jpe,.jps,.mng,.pam,.pbm,.pcd,.pcx,.pes,.pfm,.pgm,.picon,.pict,.pnm,.ppm,.sgi,.tga,.wbmp,.xbm,.xpm,.xwd,.jpeg,.svg,.tif,image/*"
+									/>
+								</label>
+							</div>
+						</div>
+
+						<div class="space-y-4">
+							<div class="flex items-center justify-between gap-4">
+								<div>
+									<p class="text-sm uppercase tracking-[0.28em] text-neutral-500">Preview</p>
+									<p id="imageMeta" class="mt-1 text-sm text-neutral-500">
+										No image loaded yet
+									</p>
+								</div>
+							</div>
+
+							<div class="preview-frame">
+								<div class="preview-ruler"></div>
+								<canvas
+									id="previewCanvas"
+									width="1232"
+									height="672"
+									class="preview-canvas"
+									aria-label="Image crop preview"
+								></canvas>
+								<div id="emptyState" class="preview-empty">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 -960 960 960"
+										fill="#737373"
+										class="mx-auto h-[100px] w-[100px]"
+										aria-hidden="true"
+									>
+										<path d="M240-320h480v-320H240v320Zm-80 160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm0-80h640v-480H160v480Zm0 0v-480 480Zm160-160 85-113 55 73 75-100 105 140H320Z"></path>
+									</svg>
+									<p class="text-lg font-medium text-[#737373]">Your crop preview will appear here</p>
+									<p class="max-w-md text-sm leading-6 text-neutral-500">
+										The canvas always reflects the final aspect ratio. Drag the image to reposition it and use zoom to tighten the crop.
+									</p>
+								</div>
+							</div>
+
+							<div class="grid gap-3 sm:grid-cols-2">
+								<button id="clearButton" class="button-secondary w-full" type="button">
+									Clear Image
+								</button>
+								<button id="resetCropButton" class="button-secondary w-full" type="button">
+									Reset Crop
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<aside class="panel p-5 sm:p-6">
+						<div class="space-y-6">
+							<div class="space-y-2 pt-[20px] pb-[20px]">
+								<div class="flex items-center gap-3">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 -960 960 960"
+										fill="#1f1f1f"
+										class="h-8 w-8 shrink-0"
+										aria-hidden="true"
+									>
+										<path d="M520-600v-80h120v-160h80v160h120v80H520Zm120 480v-400h80v400h-80Zm-400 0v-160H120v-80h320v80H320v160h-80Zm0-320v-400h80v400h-80Z"></path>
+									</svg>
+									<h2 class="text-2xl font-semibold tracking-[-0.03em] text-black">
+										Prepare the final asset
+									</h2>
+								</div>
+							</div>
+
+						<form id="controlsForm" class="space-y-5">
+							<div class="space-y-2">
+								<label class="field-label" for="assetName">Asset Name</label>
+								<input
+									id="assetName"
+									name="assetName"
+									class="text-input rounded-[8px]"
+									type="text"
+									placeholder="installer-location-front-bay"
+								/>
+							</div>
+
+							<div class="space-y-4">
+								<div class="space-y-2">
+									<label class="field-label" for="preset">Size Preset</label>
+									<select id="preset" name="preset" class="text-input">
+										{
+											sizePresets.map((preset) => (
+												<option value={`${preset.width}x${preset.height}`} data-format={preset.exportFormat}>
+													{preset.label} ({preset.width}x{preset.height})
+												</option>
+											))
+										}
+									</select>
+								</div>
+							</div>
+
+							<div class="space-y-2">
+								<div class="flex items-center justify-between gap-4">
+									<label class="field-label" for="zoom">Zoom</label>
+									<span id="zoomValue" class="text-sm text-neutral-700">100%</span>
+								</div>
+								<input id="zoom" name="zoom" type="range" min="25" max="400" step="1" value="100" class="range-input" />
+							</div>
+
+							<div class="grid gap-4 sm:grid-cols-2">
+								<div class="space-y-2">
+									<div class="flex items-center justify-between gap-4">
+										<label class="field-label" for="offsetX">Horizontal</label>
+										<span id="offsetXValue" class="text-sm text-neutral-700">0 px</span>
+									</div>
+									<input id="offsetX" name="offsetX" type="range" min="-500" max="500" step="1" value="0" class="range-input" />
+								</div>
+								<div class="space-y-2">
+									<div class="flex items-center justify-between gap-4">
+										<label class="field-label" for="offsetY">Vertical</label>
+										<span id="offsetYValue" class="text-sm text-neutral-700">0 px</span>
+									</div>
+									<input id="offsetY" name="offsetY" type="range" min="-500" max="500" step="1" value="0" class="range-input" />
+								</div>
+							</div>
+
+							<div class="space-y-2">
+								<div class="flex items-center justify-between gap-4">
+									<label class="field-label" for="quality">Compression Quality</label>
+									<span id="qualityValue" class="text-sm text-neutral-700">92%</span>
+								</div>
+								<input id="quality" name="quality" type="range" min="50" max="100" step="1" value="92" class="range-input" />
+							</div>
+
+							<div>
+								<button id="downloadButton" class="button-primary w-full" type="button">
+									Download Export
+								</button>
+							</div>
+						</form>
+
+						<div id="status" class="status-line" aria-live="polite">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 -960 960 960"
+								fill="#1f1f1f"
+								class="h-8 w-8 shrink-0"
+								aria-hidden="true"
+							>
+								<path d="M440-280h80v-240h-80v240Zm68.5-331.5Q520-623 520-640t-11.5-28.5Q497-680 480-680t-28.5 11.5Q440-657 440-640t11.5 28.5Q463-600 480-600t28.5-11.5ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"></path>
+							</svg>
+							<span>Ready to load an image</span>
+						</div>
+
+						<p class="text-sm leading-6 text-neutral-500">
+							Having trouble opening some formats like HEIC?
+							<a
+								href="https://convert.io/image-converter"
+								target="_blank"
+								rel="noreferrer"
+								class="font-medium text-[#3270e6] underline underline-offset-4"
+							>
+								Convert the image here
+							</a>
+						</p>
+					</div>
+				</aside>
+			</section>
+		</main>
+
+		<script>
+			import { ImageMagick, MagickFormat, initializeImageMagick } from '@imagemagick/magick-wasm';
+			import magickWasmUrl from '@imagemagick/magick-wasm/magick.wasm?url';
+			import * as UTIF from 'utif';
+
+			const previewCanvas = document.querySelector('#previewCanvas');
+			const previewContext = previewCanvas.getContext('2d');
+			const fileInput = document.querySelector('#fileInput');
+			const dropzone = document.querySelector('#dropzone');
+			const assetNameInput = document.querySelector('#assetName');
+			const presetInput = document.querySelector('#preset');
+			const zoomInput = document.querySelector('#zoom');
+			const zoomValue = document.querySelector('#zoomValue');
+			const offsetXInput = document.querySelector('#offsetX');
+			const offsetYInput = document.querySelector('#offsetY');
+			const offsetXValue = document.querySelector('#offsetXValue');
+			const offsetYValue = document.querySelector('#offsetYValue');
+			const qualityInput = document.querySelector('#quality');
+			const qualityValue = document.querySelector('#qualityValue');
+			const resetCropButton = document.querySelector('#resetCropButton');
+			const clearButton = document.querySelector('#clearButton');
+			const downloadButton = document.querySelector('#downloadButton');
+			const status = document.querySelector('#status');
+			const statusText = status.querySelector('span');
+			const imageMeta = document.querySelector('#imageMeta');
+			const emptyState = document.querySelector('#emptyState');
+			const magickSupportedExtensions = new Set([
+				'jpg', 'jpeg', 'png', 'psd', 'tif', 'tiff', 'webp', 'bmp', 'gif', 'heic', 'jp2', 'hdr',
+				'dds', 'exr', 'fts', 'heif', 'jfif', 'jpe', 'jps', 'mng', 'pam', 'pbm', 'pcd', 'pcx',
+				'pes', 'pfm', 'pgm', 'picon', 'pict', 'pnm', 'ppm', 'sgi', 'tga', 'wbmp', 'xbm', 'xpm',
+				'xwd', 'svg',
+			]);
+
+			const state = {
+				image: null,
+				imageWidth: 0,
+				imageHeight: 0,
+				fileName: '',
+				fileType: '',
+				coverScale: 1,
+				scale: 1,
+				baseOffsetX: 0,
+				baseOffsetY: 0,
+				offsetX: 0,
+				offsetY: 0,
+				dragging: false,
+				lastPointerX: 0,
+				lastPointerY: 0,
+			};
+
+			const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+			let magickInitializationPromise;
+
+			const sanitizeBaseName = (value) =>
+				value
+					.toLowerCase()
+					.replace(/\.[^.]+$/, '')
+					.replace(/[^a-z0-9]+/g, '-')
+					.replace(/^-+|-+$/g, '') || 'network-image';
+
+			const getPresetExportFormat = () =>
+				presetInput.selectedOptions[0]?.dataset.format || 'image/jpeg';
+
+			const getExportExtension = () => {
+				const exportType = getPresetExportFormat();
+				return exportType === 'image/png' ? 'png' : 'jpg';
+			};
+
+			const updateStatus = (message) => {
+				statusText.textContent = message;
+			};
+
+			const updateValueLabels = () => {
+				zoomValue.textContent = `${zoomInput.value}%`;
+				offsetXValue.textContent = `${offsetXInput.value} px`;
+				offsetYValue.textContent = `${offsetYInput.value} px`;
+				qualityValue.textContent = `${qualityInput.value}%`;
+			};
+
+			const updatePreviewCanvasSize = () => {
+				const [presetWidth, presetHeight] = (presetInput.value || '1232x672').split('x').map(Number);
+				const width = Math.max(200, presetWidth || 1232);
+				const height = Math.max(200, presetHeight || 672);
+				previewCanvas.width = width;
+				previewCanvas.height = height;
+			};
+
+			const resetCrop = () => {
+				if (!state.image) {
+					return;
+				}
+
+				updatePreviewCanvasSize();
+				const canvasWidth = previewCanvas.width;
+				const canvasHeight = previewCanvas.height;
+				state.coverScale = Math.max(canvasWidth / state.imageWidth, canvasHeight / state.imageHeight);
+				state.scale = state.coverScale;
+				state.baseOffsetX = (canvasWidth - state.imageWidth * state.scale) / 2;
+				state.baseOffsetY = (canvasHeight - state.imageHeight * state.scale) / 2;
+				state.offsetX = 0;
+				state.offsetY = 0;
+				zoomInput.value = '100';
+				offsetXInput.value = '0';
+				offsetYInput.value = '0';
+				updateValueLabels();
+				renderPreview();
+			};
+
+			const getDrawMetrics = () => {
+				const width = state.imageWidth * state.scale;
+				const height = state.imageHeight * state.scale;
+				return {
+					width,
+					height,
+					x: state.baseOffsetX + state.offsetX,
+					y: state.baseOffsetY + state.offsetY,
+				};
+			};
+
+			const limitOffsets = () => {
+				if (!state.image) {
+					return;
+				}
+
+				const width = state.imageWidth * state.scale;
+				const height = state.imageHeight * state.scale;
+				const minOffsetX = Math.min(0, previewCanvas.width - width) - state.baseOffsetX;
+				const maxOffsetX = Math.max(0, previewCanvas.width - width) - state.baseOffsetX;
+				const minOffsetY = Math.min(0, previewCanvas.height - height) - state.baseOffsetY;
+				const maxOffsetY = Math.max(0, previewCanvas.height - height) - state.baseOffsetY;
+
+				state.offsetX = clamp(state.offsetX, minOffsetX, maxOffsetX);
+				state.offsetY = clamp(state.offsetY, minOffsetY, maxOffsetY);
+
+				offsetXInput.min = String(Math.floor(minOffsetX));
+				offsetXInput.max = String(Math.ceil(maxOffsetX));
+				offsetYInput.min = String(Math.floor(minOffsetY));
+				offsetYInput.max = String(Math.ceil(maxOffsetY));
+				offsetXInput.value = String(Math.round(state.offsetX));
+				offsetYInput.value = String(Math.round(state.offsetY));
+				updateValueLabels();
+			};
+
+			const renderPreview = () => {
+				previewContext.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+				previewContext.fillStyle = '#ffffff';
+				previewContext.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+				if (!state.image) {
+					emptyState.dataset.visible = 'true';
+					return;
+				}
+
+				emptyState.dataset.visible = 'false';
+				limitOffsets();
+
+				const drawMetrics = getDrawMetrics();
+				previewContext.imageSmoothingEnabled = true;
+				previewContext.imageSmoothingQuality = 'high';
+				previewContext.drawImage(state.image, drawMetrics.x, drawMetrics.y, drawMetrics.width, drawMetrics.height);
+
+				previewContext.strokeStyle = 'rgba(127, 94, 60, 0.18)';
+				previewContext.lineWidth = Math.max(2, previewCanvas.width * 0.0025);
+				previewContext.strokeRect(
+					previewContext.lineWidth / 2,
+					previewContext.lineWidth / 2,
+					previewCanvas.width - previewContext.lineWidth,
+					previewCanvas.height - previewContext.lineWidth,
+				);
+			};
+
+			const updateMeta = () => {
+				if (!state.image) {
+					imageMeta.textContent = 'No image loaded yet';
+					return;
+				}
+
+				imageMeta.textContent = `${state.fileName} • ${state.imageWidth}x${state.imageHeight}`;
+			};
+
+			const updateScaleFromZoom = () => {
+				if (!state.image) {
+					return;
+				}
+
+				const previousScale = state.scale;
+				const centerX = previewCanvas.width / 2;
+				const centerY = previewCanvas.height / 2;
+				const currentDrawX = state.baseOffsetX + state.offsetX;
+				const currentDrawY = state.baseOffsetY + state.offsetY;
+				const normalizedCenterX = (centerX - currentDrawX) / previousScale;
+				const normalizedCenterY = (centerY - currentDrawY) / previousScale;
+
+				state.scale = state.coverScale * (Number(zoomInput.value) / 100);
+				state.baseOffsetX = centerX - normalizedCenterX * state.scale;
+				state.baseOffsetY = centerY - normalizedCenterY * state.scale;
+				state.offsetX = 0;
+				state.offsetY = 0;
+				renderPreview();
+			};
+
+			const drawToExportCanvas = () => {
+				const exportCanvas = document.createElement('canvas');
+				exportCanvas.width = previewCanvas.width;
+				exportCanvas.height = previewCanvas.height;
+				const exportContext = exportCanvas.getContext('2d');
+				const drawMetrics = getDrawMetrics();
+
+				exportContext.fillStyle = '#ffffff';
+				exportContext.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+				exportContext.imageSmoothingEnabled = true;
+				exportContext.imageSmoothingQuality = 'high';
+				exportContext.drawImage(state.image, drawMetrics.x, drawMetrics.y, drawMetrics.width, drawMetrics.height);
+
+				return exportCanvas;
+			};
+
+			const loadBitmapFromImageElement = (sourceUrl) =>
+				new Promise((resolve, reject) => {
+					const image = new Image();
+					image.onload = () => resolve(image);
+					image.onerror = () => reject(new Error('The browser could not load that image.'));
+					image.src = sourceUrl;
+				});
+
+			const getFileExtension = (fileName) => fileName.toLowerCase().split('.').pop() || '';
+
+			const ensureImageMagickReady = () => {
+				if (!magickInitializationPromise) {
+					magickInitializationPromise = initializeImageMagick(magickWasmUrl);
+				}
+
+				return magickInitializationPromise;
+			};
+
+			const loadImageWithImageMagick = async (file) => {
+				await ensureImageMagickReady();
+
+				const sourceBytes = new Uint8Array(await file.arrayBuffer());
+				const pngBytes = await new Promise((resolve, reject) => {
+					try {
+						ImageMagick.read(sourceBytes, (image) => {
+							image.write(MagickFormat.Png, (data) => resolve(data));
+						});
+					} catch (error) {
+						reject(error);
+					}
+				});
+
+				const blob = new Blob([pngBytes], { type: 'image/png' });
+				return loadBitmapFromImageElement(URL.createObjectURL(blob));
+			};
+
+			const loadImageFromFile = async (file) => {
+				const lowerName = file.name.toLowerCase();
+				const extension = getFileExtension(lowerName);
+				const isSvg =
+					file.type === 'image/svg+xml' ||
+					lowerName.endsWith('.svg');
+				const isTiff =
+					file.type === 'image/tiff' ||
+					lowerName.endsWith('.tif') ||
+					lowerName.endsWith('.tiff');
+
+				if (isSvg) {
+					return loadBitmapFromImageElement(URL.createObjectURL(file));
+				}
+
+				if (isTiff) {
+					const buffer = await file.arrayBuffer();
+					const ifds = UTIF.decode(buffer);
+
+					if (!ifds.length) {
+						throw new Error('The TIFF file did not contain a readable image.');
+					}
+
+					UTIF.decodeImage(buffer, ifds[0]);
+					const rgba = UTIF.toRGBA8(ifds[0]);
+					const imageData = new ImageData(
+						new Uint8ClampedArray(rgba),
+						ifds[0].width,
+						ifds[0].height,
+					);
+					const canvas = document.createElement('canvas');
+					canvas.width = ifds[0].width;
+					canvas.height = ifds[0].height;
+					canvas.getContext('2d').putImageData(imageData, 0, 0);
+					const objectUrl = canvas.toDataURL('image/png');
+					return loadBitmapFromImageElement(objectUrl);
+				}
+
+				try {
+					if ('createImageBitmap' in window) {
+						return await createImageBitmap(file);
+					}
+
+					return await loadBitmapFromImageElement(URL.createObjectURL(file));
+				} catch (nativeError) {
+					if (!magickSupportedExtensions.has(extension)) {
+						throw nativeError;
+					}
+				}
+
+				return loadImageWithImageMagick(file);
+			};
+
+			const loadFile = async (file) => {
+				if (!file) {
+					return;
+				}
+
+				try {
+					updateStatus(`Loading ${file.name}...`);
+					const image = await loadImageFromFile(file);
+					const imageWidth = 'naturalWidth' in image ? image.naturalWidth : image.width;
+					const imageHeight = 'naturalHeight' in image ? image.naturalHeight : image.height;
+					state.image = image;
+					state.imageWidth = imageWidth;
+					state.imageHeight = imageHeight;
+					state.fileName = file.name;
+					state.fileType = file.type;
+					assetNameInput.value = sanitizeBaseName(file.name);
+					updateMeta();
+					resetCrop();
+					updateStatus(`Loaded ${file.name}. Adjust the crop and export when ready.`);
+				} catch (error) {
+					console.error(error);
+					updateStatus(error instanceof Error ? error.message : 'The selected file could not be loaded.');
+				}
+			};
+
+			const clearImage = () => {
+				state.image = null;
+				state.imageWidth = 0;
+				state.imageHeight = 0;
+				state.fileName = '';
+				state.fileType = '';
+				assetNameInput.value = '';
+				zoomInput.value = '100';
+				offsetXInput.value = '0';
+				offsetYInput.value = '0';
+				updateMeta();
+				updateValueLabels();
+				renderPreview();
+				updateStatus('Image cleared. Load another file when ready.');
+				fileInput.value = '';
+			};
+
+			const exportImage = () => {
+				if (!state.image) {
+					updateStatus('Load an image before exporting.');
+					return;
+				}
+
+				const exportCanvas = drawToExportCanvas();
+				const exportType = getPresetExportFormat();
+				const quality = Number(qualityInput.value) / 100;
+				const assetName = sanitizeBaseName(assetNameInput.value || state.fileName);
+				const extension = getExportExtension();
+
+				exportCanvas.toBlob(
+					(blob) => {
+						if (!blob) {
+							updateStatus('Export failed. Please try again.');
+							return;
+						}
+
+						const url = URL.createObjectURL(blob);
+						const link = document.createElement('a');
+						link.href = url;
+						link.download = `${assetName}.${extension}`;
+						link.click();
+						URL.revokeObjectURL(url);
+						updateStatus(`Downloaded ${assetName}.${extension}`);
+					},
+					exportType,
+					exportType === 'image/png' ? undefined : quality,
+				);
+			};
+
+			const handleFiles = (files) => {
+				if (!files?.length) {
+					return;
+				}
+
+				loadFile(files[0]);
+			};
+
+			fileInput.addEventListener('change', (event) => {
+				handleFiles(event.target.files);
+			});
+
+			dropzone.addEventListener('dragover', (event) => {
+				event.preventDefault();
+				dropzone.dataset.dragging = 'true';
+			});
+
+			dropzone.addEventListener('dragleave', () => {
+				dropzone.dataset.dragging = 'false';
+			});
+
+			dropzone.addEventListener('drop', (event) => {
+				event.preventDefault();
+				dropzone.dataset.dragging = 'false';
+				handleFiles(event.dataTransfer.files);
+			});
+
+			presetInput.addEventListener('change', () => {
+				resetCrop();
+			});
+
+			zoomInput.addEventListener('input', () => {
+				updateValueLabels();
+				updateScaleFromZoom();
+			});
+
+			offsetXInput.addEventListener('input', () => {
+				state.offsetX = Number(offsetXInput.value);
+				updateValueLabels();
+				renderPreview();
+			});
+
+			offsetYInput.addEventListener('input', () => {
+				state.offsetY = Number(offsetYInput.value);
+				updateValueLabels();
+				renderPreview();
+			});
+
+			qualityInput.addEventListener('input', updateValueLabels);
+			resetCropButton.addEventListener('click', resetCrop);
+			clearButton.addEventListener('click', clearImage);
+			downloadButton.addEventListener('click', exportImage);
+
+			previewCanvas.addEventListener('pointerdown', (event) => {
+				if (!state.image) {
+					return;
+				}
+
+				state.dragging = true;
+				state.lastPointerX = event.clientX;
+				state.lastPointerY = event.clientY;
+				previewCanvas.setPointerCapture(event.pointerId);
+			});
+
+			previewCanvas.addEventListener('pointermove', (event) => {
+				if (!state.dragging || !state.image) {
+					return;
+				}
+
+				const deltaX = event.clientX - state.lastPointerX;
+				const deltaY = event.clientY - state.lastPointerY;
+				state.lastPointerX = event.clientX;
+				state.lastPointerY = event.clientY;
+				state.offsetX += deltaX;
+				state.offsetY += deltaY;
+				renderPreview();
+			});
+
+			const endPointerDrag = (event) => {
+				if (!state.dragging) {
+					return;
+				}
+
+				state.dragging = false;
+				previewCanvas.releasePointerCapture(event.pointerId);
+			};
+
+			previewCanvas.addEventListener('pointerup', endPointerDrag);
+			previewCanvas.addEventListener('pointercancel', endPointerDrag);
+
+			updatePreviewCanvasSize();
+			updateValueLabels();
+			renderPreview();
+		</script>
 	</body>
 </html>
